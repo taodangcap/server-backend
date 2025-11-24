@@ -1,20 +1,15 @@
 {
-  "name": "soundcloud-proxy-server",
+  "name": "server-backend",
   "version": "1.0.0",
-  "type": "module",
-  "description": "SoundCloud Proxy Server for CORS bypass",
-  "main": "server.js",
+  "description": "Backend API using JSON Server",
+  "main": "examples.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "json-server --watch db.json --port $PORT"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.6.1"
+    "json-server": "^0.17.4"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=14"
   }
 }
-
