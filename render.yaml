@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: soundcloud-proxy
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: VITE_SOUNDCLOUD_CLIENT_ID
+        sync: false
+      - key: PROXY_PORT
+        value: 3001
+
