@@ -83,8 +83,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'SoundCloud Proxy Server' })
 })
 
-app.listen(PORT, () => {
-  console.log(`🚀 SoundCloud Proxy Server running on http://localhost:${PORT}`)
-  console.log(`📡 Proxy endpoint: http://localhost:${PORT}/api/soundcloud/search`)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 SoundCloud Proxy Server running on port ${PORT}`)
+  console.log(`📡 Proxy endpoint: /api/soundcloud/search`)
 })
 
