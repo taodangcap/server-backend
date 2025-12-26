@@ -18,7 +18,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",

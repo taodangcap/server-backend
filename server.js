@@ -3,13 +3,10 @@
 
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
-
-dotenv.config()
+import config from './config.js'
 
 const app = express()
-// Hỗ trợ cả PORT (cho hosting) và PROXY_PORT (cho local)
-const PORT = process.env.PORT || process.env.PROXY_PORT || 3001
+const PORT = config.port
 
 // Enable CORS for all routes
 app.use(cors())
@@ -18,18 +15,25 @@ app.use(express.json())
 // SoundCloud API proxy endpoint
 app.get('/api/soundcloud/search', async (req, res) => {
   try {
-    const { q, limit = 10, client_id } = req.query
+    const { q, limit = config.soundcloud.defaultLimit, client_id } = req.query
 
     if (!q) {
       return res.status(400).json({ error: 'Query parameter "q" is required' })
     }
 
-    if (!client_id) {
-      return res.status(400).json({ error: 'Client ID is required. Set VITE_SOUNDCLOUD_CLIENT_ID in .env' })
+    // Use client_id from query or config
+    const clientId = client_id || config.soundcloud.clientId
+
+    if (!clientId) {
+      return res.status(400).json({ 
+        error: 'Client ID is required. Set SOUNDCLOUD_CLIENT_ID environment variable or pass it as query parameter' 
+      })
     }
 
+    // Validate and limit the search limit
+    const searchLimit = Math.min(parseInt(limit) || config.soundcloud.defaultLimit, config.soundcloud.maxLimit)
     const searchQuery = encodeURIComponent(q)
-    const apiUrl = `https://api-v2.soundcloud.com/search/tracks?q=${searchQuery}&limit=${limit}&client_id=${client_id}`
+    const apiUrl = `${config.soundcloud.apiBaseUrl}/search/tracks?q=${searchQuery}&limit=${searchLimit}&client_id=${clientId}`
 
     console.log(`Proxying SoundCloud search: ${q}`)
 
@@ -83,8 +87,16 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'SoundCloud Proxy Server' })
 })
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 SoundCloud Proxy Server running on port ${PORT}`)
+app.listen(PORT, config.host, () => {
+  console.log(`🚀 ${config.server.name} v${config.server.version}`)
+  console.log(`📍 Running on ${config.host}:${PORT}`)
   console.log(`📡 Proxy endpoint: /api/soundcloud/search`)
+  console.log(`🌍 Environment: ${config.nodeEnv}`)
+  console.log(`✅ Server is listening on all interfaces (0.0.0.0)`)
+  if (config.soundcloud.clientId) {
+    console.log(`🔑 SoundCloud Client ID: ${config.soundcloud.clientId.substring(0, 8)}...`)
+  } else {
+    console.log(`⚠️  SoundCloud Client ID: Not set (will use query parameter or fail)`)
+  }
 })
 

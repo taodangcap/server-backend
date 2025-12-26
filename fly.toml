@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for soundcloud-proxy-server on 2024-01-01T00:00:00Z
+# fly.toml app configuration file generated for soundcloud-proxy-server
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = "soundcloud-proxy-server"
-primary_region = "sin" # Singapore region
+primary_region = "sin"
 
 [build]
 
@@ -20,31 +20,10 @@ primary_region = "sin" # Singapore region
   min_machines_running = 0
   processes = ["app"]
 
-[[services]]
-  protocol = "tcp"
-  internal_port = 8080
-  processes = ["app"]
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-    force_https = true
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
-
-  [services.concurrency]
-    type = "connections"
-    hard_limit = 25
-    soft_limit = 20
-
-  [[services.http_checks]]
+  [[http_service.checks]]
     interval = "10s"
     timeout = "2s"
     grace_period = "5s"
     method = "GET"
     path = "/health"
-    protocol = "http"
-    tls_skip_verify = false
 

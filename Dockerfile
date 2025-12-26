@@ -5,16 +5,17 @@ WORKDIR /app
 # Copy package.json
 COPY package.json ./
 
-# Install only production dependencies needed for server
-RUN npm install --production express cors dotenv
+# Install only production dependencies
+RUN npm install --production --omit=dev
 
 # Copy application files
 COPY server.js ./
+COPY config.js ./
 
 # Expose port
 EXPOSE 8080
 
-# Set PORT environment variable
+# Set PORT environment variable (Fly.io will override this)
 ENV PORT=8080
 
 # Start the server
